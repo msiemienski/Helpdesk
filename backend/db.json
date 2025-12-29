@@ -1,0 +1,46 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "email": "admin@example.com",
+            "password": "admin",
+            "firstName": "Admin",
+            "lastName": "User",
+            "role": "admin"
+        },
+        {
+            "id": 2,
+            "email": "user@example.com",
+            "password": "user",
+            "firstName": "John",
+            "lastName": "Doe",
+            "role": "user"
+        }
+    ],
+    "resources": [
+        {
+            "id": 1,
+            "name": "Projector A",
+            "description": "Main hall projector"
+        },
+        {
+            "id": 2,
+            "name": "Laptop Dell",
+            "description": "Spare laptop"
+        }
+    ],
+    "reservations": [
+        {
+            "id": 1,
+            "resourceId": 1,
+            "userId": 2,
+            "date": "2024-01-01"
+        },
+        {
+            "id": 2,
+            "resourceId": 2,
+            "userId": 1,
+            "date": "2024-01-02"
+        }
+    ]
+}
