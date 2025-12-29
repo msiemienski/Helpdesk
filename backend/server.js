@@ -9,12 +9,12 @@ const middlewares = jsonServer.defaults();
 const SECRET_KEY = '123456789';
 const expiresIn = '1h';
 
-// Helper to create token
+
 function createToken(payload) {
     return jwt.sign(payload, SECRET_KEY, { expiresIn });
 }
 
-// Helper to verify token
+
 function verifyToken(token) {
     return jwt.verify(token, SECRET_KEY, (err, decode) => decode !== undefined ? decode : err);
 }
@@ -23,11 +23,10 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(middlewares);
 
-// Custom route: Login
+
 server.post('/auth/login', (req, res) => {
     const { email, password } = req.body;
 
-    // Find user in db
     const user = router.db.get('users').find({ email, password }).value();
 
     if (!user) {
@@ -36,15 +35,15 @@ server.post('/auth/login', (req, res) => {
         return res.status(status).json({ status, message });
     }
 
-    // Create token
+
     const token = createToken({ id: user.id, email: user.email, role: user.role });
 
-    // Return user info (excluding password) and token
+
     const { password: _, ...userWithoutPassword } = user;
     res.status(200).json({ token, user: userWithoutPassword });
 });
 
-// Custom route: Me
+
 server.get('/auth/me', (req, res) => {
     if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
         const status = 401;
@@ -79,19 +78,19 @@ server.get('/auth/me', (req, res) => {
     }
 });
 
-// Auth Middleware protection - Global
+
 server.use((req, res, next) => {
-    // Allow auth routes
+
     if (req.path.startsWith('/auth')) {
         return next();
     }
 
-    // Public routes
+
     if (req.method === 'GET' && req.path.startsWith('/resources')) {
         return next();
     }
 
-    // Need authorization for everything else
+
     if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
         const status = 401;
         const message = 'Error in authorization format';
@@ -115,17 +114,17 @@ server.use((req, res, next) => {
     }
 });
 
-// Validation Middleware: Block resource deletion if reservations exist
+
 server.use((req, res, next) => {
     if (req.method === 'DELETE' && req.path.startsWith('/resources/')) {
         const resourceId = parseInt(req.path.split('/').pop());
 
         if (!isNaN(resourceId)) {
-            const reservations = router.db.get('reservations').filter({ resourceId: resourceId }).value();
-            if (reservations.length > 0) {
+            const tickets = router.db.get('tickets').filter({ resourceId: resourceId }).value();
+            if (tickets.length > 0) {
                 return res.status(409).json({
                     status: 409,
-                    message: 'Cannot delete resource because it has active reservations.'
+                    message: 'Cannot delete resource because it has associated tickets.'
                 });
             }
         }

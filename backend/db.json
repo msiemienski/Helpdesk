@@ -29,17 +29,23 @@
             "description": "Spare laptop"
         }
     ],
-    "reservations": [
+    "tickets": [
         {
             "id": 1,
             "resourceId": 1,
             "userId": 2,
+            "status": "OPEN",
+            "title": "Projector issue",
+            "description": "Not working",
             "date": "2024-01-01"
         },
         {
             "id": 2,
             "resourceId": 2,
             "userId": 1,
+            "status": "CLOSED",
+            "title": "Laptop request",
+            "description": "Need for conference",
             "date": "2024-01-02"
         }
     ]
