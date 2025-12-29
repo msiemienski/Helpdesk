@@ -26,7 +26,6 @@ export class TicketListComponent implements OnInit {
     }
 
     loadData() {
-        // Fetch categories first or in parallel to map IDs to names
         const tickets$ = this.ticketService.getTickets();
         const categories$ = this.ticketService.getCategories();
 
@@ -45,19 +44,19 @@ export class TicketListComponent implements OnInit {
         return this.categories.get(id) || 'Unknown';
     }
 
-    getSeverity(status: string): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" | undefined {
+    getSeverity(status: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
         switch (status) {
             case 'OPEN': return 'info';
-            case 'IN_PROGRESS': return 'warning';
+            case 'IN_PROGRESS': return 'warn';
             case 'CLOSED': return 'success';
             default: return undefined;
         }
     }
 
-    getPrioritySeverity(priority: string): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" | undefined {
+    getPrioritySeverity(priority: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
         switch (priority) {
             case 'HIGH': return 'danger';
-            case 'MEDIUM': return 'warning';
+            case 'MEDIUM': return 'warn';
             case 'LOW': return 'info';
             default: return undefined;
         }
