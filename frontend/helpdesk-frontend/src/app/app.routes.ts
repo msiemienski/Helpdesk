@@ -7,6 +7,8 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { ForbiddenComponent } from './features/forbidden/forbidden.component';
 import { NotFoundComponent } from './features/not-found/not-found.component';
 
+import { authGuard } from './core/guards/auth.guard';
+
 export const routes: Routes = [
     {
         path: '',
@@ -14,8 +16,8 @@ export const routes: Routes = [
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
-            { path: 'tickets', component: TicketListComponent },
-            { path: 'tickets/:id', component: TicketDetailComponent },
+            { path: 'tickets', component: TicketListComponent, canActivate: [authGuard] },
+            { path: 'tickets/:id', component: TicketDetailComponent, canActivate: [authGuard] },
         ]
     },
     { path: 'auth/login', component: LoginComponent },

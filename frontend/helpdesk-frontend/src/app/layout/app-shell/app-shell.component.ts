@@ -1,17 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, ToastModule, ConfirmDialogModule],
+  imports: [RouterOutlet, NavbarComponent],
   template: `
     <div class="min-h-screen flex flex-column">
-      <p-toast></p-toast>
-      <p-confirmDialog></p-confirmDialog>
       <app-navbar></app-navbar>
       <main class="flex-grow-1 p-4 surface-ground">
         <div class="surface-card p-4 shadow-1 border-round">
@@ -19,7 +15,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
         </div>
       </main>
       <footer class="p-3 text-center text-500 text-sm">
-        &copy; 2025 HelpDesk App
+        &copy; 2024 HelpDesk App
       </footer>
     </div>
   `

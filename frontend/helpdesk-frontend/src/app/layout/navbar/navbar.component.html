@@ -10,7 +10,18 @@
     </div>
 
     <div class="flex gap-2">
-        <!-- Placeholder for auth buttons -->
-        <a routerLink="/auth/login" class="p-button p-component p-button-text no-underline">Zaloguj</a>
+        <ng-container *ngIf="user$ | async as user; else guest">
+            <div class="flex align-items-center gap-3 mr-2">
+                <span class="text-700 text-sm">
+                    Witaj, <span class="font-bold text-900">{{ user.firstName }} {{ user.lastName }}</span>
+                    <span class="ml-1 px-2 py-1 surface-200 border-round text-xs font-semibold uppercase">{{ user.role
+                        }}</span>
+                </span>
+                <p-button label="Wyloguj" icon="pi pi-sign-out" [text]="true" (click)="logout()"></p-button>
+            </div>
+        </ng-container>
+        <ng-template #guest>
+            <a routerLink="/auth/login" class="p-button p-component p-button-text no-underline">Zaloguj</a>
+        </ng-template>
     </div>
 </nav>
