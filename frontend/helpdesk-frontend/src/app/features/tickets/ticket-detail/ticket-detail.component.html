@@ -1,0 +1,44 @@
+<div class="grid" *ngIf="ticket">
+    <div class="col-12 md:col-8">
+        <p-card [header]="ticket.title" styleClass="mb-4">
+            <div class="flex gap-2 mb-3">
+                <p-tag [value]="ticket.priority"></p-tag>
+                <p-tag [value]="ticket.status" severity="info"></p-tag>
+                <p-tag [value]="getCategoryName(ticket.categoryId)" severity="secondary"></p-tag>
+            </div>
+            <p class="m-0 line-height-3 text-lg">
+                {{ ticket.description }}
+            </p>
+            <div class="text-500 mt-3 text-sm">
+                Utworzono: {{ ticket.date | date:'medium' }}
+            </div>
+        </p-card>
+
+        <p-card header="Komentarze">
+            <div class="flex flex-column gap-4">
+                <div *ngFor="let comment of (comments$ | async)" class="surface-ground p-3 border-round">
+                    <div class="flex justify-content-between mb-2">
+                        <span class="font-bold">User #{{ comment.userId }}</span>
+                        <span class="text-500 text-sm">{{ comment.date | date:'short' }}</span>
+                    </div>
+                    <div>{{ comment.content }}</div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <span class="p-float-label">
+                    <textarea pInputTextarea [(ngModel)]="newCommentContent" [rows]="3" [cols]="30"
+                        class="w-full"></textarea>
+                    <label>Napisz komentarz...</label>
+                </span>
+                <div class="mt-2 flex justify-content-end">
+                    <p-button label="Wyślij" icon="pi pi-send" (click)="addComment()"></p-button>
+                </div>
+            </div>
+        </p-card>
+    </div>
+
+    <div class="col-12 md:col-4">
+        <!-- Sidebar info if needed -->
+    </div>
+</div>

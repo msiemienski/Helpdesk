@@ -15,38 +15,63 @@
             "firstName": "John",
             "lastName": "Doe",
             "role": "user"
+        },
+        {
+            "id": 3,
+            "email": "support@example.com",
+            "password": "support",
+            "firstName": "Tech",
+            "lastName": "Support",
+            "role": "support"
         }
     ],
-    "resources": [
+    "categories": [
         {
             "id": 1,
-            "name": "Projector A",
-            "description": "Main hall projector"
+            "name": "Hardware"
         },
         {
             "id": 2,
-            "name": "Laptop Dell",
-            "description": "Spare laptop"
+            "name": "Software"
+        },
+        {
+            "id": 3,
+            "name": "Network"
+        },
+        {
+            "id": 4,
+            "name": "Access"
         }
     ],
     "tickets": [
         {
             "id": 1,
-            "resourceId": 1,
+            "categoryId": 1,
             "userId": 2,
             "status": "OPEN",
-            "title": "Projector issue",
-            "description": "Not working",
+            "priority": "HIGH",
+            "title": "Projector not working",
+            "description": "The lamp seems burned out.",
             "date": "2024-01-01"
         },
         {
             "id": 2,
-            "resourceId": 2,
-            "userId": 1,
+            "categoryId": 2,
+            "userId": 2,
             "status": "CLOSED",
-            "title": "Laptop request",
-            "description": "Need for conference",
+            "priority": "LOW",
+            "title": "Install VS Code",
+            "description": "Need it for development.",
             "date": "2024-01-02"
+        }
+    ],
+    "comments": [
+        {
+            "id": 1,
+            "ticketId": 1,
+            "userId": 3,
+            "content": "Will check it tomorrow.",
+            "date": "2024-01-03T10:00:00.000Z"
         }
     ]
 }

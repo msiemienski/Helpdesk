@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { AppShellComponent } from './layout/app-shell/app-shell.component';
 import { HomeComponent } from './features/home/home.component';
-import { ResourceListComponent } from './features/resources/resource-list/resource-list.component';
 import { TicketListComponent } from './features/tickets/ticket-list/ticket-list.component';
+import { TicketDetailComponent } from './features/tickets/ticket-detail/ticket-detail.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { ForbiddenComponent } from './features/forbidden/forbidden.component';
 import { NotFoundComponent } from './features/not-found/not-found.component';
@@ -14,8 +14,8 @@ export const routes: Routes = [
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
-            { path: 'resources', component: ResourceListComponent },
             { path: 'tickets', component: TicketListComponent },
+            { path: 'tickets/:id', component: TicketDetailComponent },
         ]
     },
     { path: 'auth/login', component: LoginComponent },
