@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, map, tap } from 'rxjs';
 import { LoginResponse, LoginRequest, User } from '../models/auth.model';
 import { ApiClient } from './api-client.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,10 @@ import { Router } from '@angular/router';
 export class AuthService {
     private userSubject = new BehaviorSubject<User | null>(null);
     user$ = this.userSubject.asObservable();
+
+    canAct$ = this.user$.pipe(
+        map(user => !!user && !user.isSuspended)
+    );
 
     private readonly TOKEN_KEY = 'auth_token';
     private readonly USER_KEY = 'auth_user';
@@ -43,6 +47,18 @@ export class AuthService {
 
     isAuthenticated(): boolean {
         return !!this.getToken();
+    }
+
+    updateUser(userData: Partial<User>) {
+        const current = this.getUser();
+        if (!current) throw new Error('No user logged in');
+
+        return this.api.put<User>(`/users/${current.id}`, { ...current, ...userData }).pipe(
+            tap(updatedUser => {
+                localStorage.setItem(this.USER_KEY, JSON.stringify(updatedUser));
+                this.userSubject.next(updatedUser);
+            })
+        );
     }
 
     private setSession(authResult: LoginResponse) {

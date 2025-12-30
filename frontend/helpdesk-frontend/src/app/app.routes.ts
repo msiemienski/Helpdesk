@@ -3,10 +3,11 @@ import { AppShellComponent } from './layout/app-shell/app-shell.component';
 import { HomeComponent } from './features/home/home.component';
 import { TicketListComponent } from './features/tickets/ticket-list/ticket-list.component';
 import { TicketDetailComponent } from './features/tickets/ticket-detail/ticket-detail.component';
+import { TicketFormComponent } from './features/tickets/ticket-form/ticket-form.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { ForbiddenComponent } from './features/forbidden/forbidden.component';
 import { NotFoundComponent } from './features/not-found/not-found.component';
-
+import { ProfileComponent } from './features/profile/profile.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -17,7 +18,10 @@ export const routes: Routes = [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'tickets', component: TicketListComponent, canActivate: [authGuard] },
+            { path: 'tickets/new', component: TicketFormComponent, canActivate: [authGuard] },
             { path: 'tickets/:id', component: TicketDetailComponent, canActivate: [authGuard] },
+            { path: 'tickets/:id/edit', component: TicketFormComponent, canActivate: [authGuard] },
+            { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
         ]
     },
     { path: 'auth/login', component: LoginComponent },

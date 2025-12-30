@@ -15,7 +15,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
         </div>
       </main>
       <footer class="p-3 text-center text-500 text-sm">
-        &copy; 2024 HelpDesk App
+        &copy; 2025 HelpDesk App
       </footer>
     </div>
   `

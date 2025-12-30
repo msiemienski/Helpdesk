@@ -13,7 +13,8 @@
         <ng-container *ngIf="user$ | async as user; else guest">
             <div class="flex align-items-center gap-3 mr-2">
                 <span class="text-700 text-sm">
-                    Witaj, <span class="font-bold text-900">{{ user.firstName }} {{ user.lastName }}</span>
+                    Witaj, <a routerLink="/profile" class="font-bold text-900 no-underline hover:underline">{{
+                        user.firstName }} {{ user.lastName }}</a>
                     <span class="ml-1 px-2 py-1 surface-200 border-round text-xs font-semibold uppercase">{{ user.role
                         }}</span>
                 </span>

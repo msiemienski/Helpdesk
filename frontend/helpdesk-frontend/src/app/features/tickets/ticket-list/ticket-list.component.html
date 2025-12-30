@@ -1,18 +1,18 @@
 <div class="card">
     <div class="flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0">Zgłoszenia</h2>
-        <!-- Future: Add Create Ticket Button -->
+        <h2 class="m-0 text-900 font-bold">Zgłoszenia</h2>
+        <p-button label="Nowe Zgłoszenie" icon="pi pi-plus" [routerLink]="['/tickets/new']"></p-button>
     </div>
 
     <p-table [value]="(tickets$ | async) || []" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:5%">ID</th>
-                <th style="width:30%">Tytuł</th>
-                <th style="width:20%">Kategoria</th>
-                <th style="width:10%">Priorytet</th>
-                <th style="width:15%">Status</th>
-                <th style="width:10%">Data</th>
+                <th style="width:5%" class="text-900 font-bold uppercase text-xs">ID</th>
+                <th style="width:30%" class="text-900 font-bold uppercase text-xs">Tytuł</th>
+                <th style="width:20%" class="text-900 font-bold uppercase text-xs">Kategoria</th>
+                <th style="width:10%" class="text-900 font-bold uppercase text-xs">Priorytet</th>
+                <th style="width:15%" class="text-900 font-bold uppercase text-xs">Status</th>
+                <th style="width:10%" class="text-900 font-bold uppercase text-xs">Data</th>
                 <th style="width:10%"></th>
             </tr>
         </ng-template>
@@ -29,7 +29,6 @@
                 </td>
                 <td>{{ ticket.date | date:'shortDate' }}</td>
                 <td>
-                    <!-- Future: RouterLink to Details -->
                     <p-button icon="pi pi-search" [rounded]="true" [text]="true"
                         [routerLink]="['/tickets', ticket.id]"></p-button>
                 </td>

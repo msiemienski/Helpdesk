@@ -1,77 +1,107 @@
 {
-    "users": [
-        {
-            "id": 1,
-            "email": "admin@example.com",
-            "password": "admin",
-            "firstName": "Admin",
-            "lastName": "User",
-            "role": "admin"
-        },
-        {
-            "id": 2,
-            "email": "user@example.com",
-            "password": "user",
-            "firstName": "John",
-            "lastName": "Doe",
-            "role": "user"
-        },
-        {
-            "id": 3,
-            "email": "support@example.com",
-            "password": "support",
-            "firstName": "Tech",
-            "lastName": "Support",
-            "role": "support"
-        }
-    ],
-    "categories": [
-        {
-            "id": 1,
-            "name": "Hardware"
-        },
-        {
-            "id": 2,
-            "name": "Software"
-        },
-        {
-            "id": 3,
-            "name": "Network"
-        },
-        {
-            "id": 4,
-            "name": "Access"
-        }
-    ],
-    "tickets": [
-        {
-            "id": 1,
-            "categoryId": 1,
-            "userId": 2,
-            "status": "OPEN",
-            "priority": "HIGH",
-            "title": "Projector not working",
-            "description": "The lamp seems burned out.",
-            "date": "2024-01-01"
-        },
-        {
-            "id": 2,
-            "categoryId": 2,
-            "userId": 2,
-            "status": "CLOSED",
-            "priority": "LOW",
-            "title": "Install VS Code",
-            "description": "Need it for development.",
-            "date": "2024-01-02"
-        }
-    ],
-    "comments": [
-        {
-            "id": 1,
-            "ticketId": 1,
-            "userId": 3,
-            "content": "Will check it tomorrow.",
-            "date": "2024-01-03T10:00:00.000Z"
-        }
-    ]
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@example.com",
+      "password": "admin",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "email": "user@example.com",
+      "firstName": "Siema",
+      "lastName": "Maciek",
+      "role": "user"
+    },
+    {
+      "id": 3,
+      "email": "support@example.com",
+      "password": "support",
+      "firstName": "Tech",
+      "lastName": "Support",
+      "role": "support"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Hardware"
+    },
+    {
+      "id": 2,
+      "name": "Software"
+    },
+    {
+      "id": 3,
+      "name": "Network"
+    },
+    {
+      "id": 4,
+      "name": "Access"
+    }
+  ],
+  "tickets": [
+    {
+      "id": 1,
+      "categoryId": 1,
+      "userId": 2,
+      "status": "OPEN",
+      "priority": "HIGH",
+      "title": "Projector not working",
+      "description": "The lamp seems burned out.",
+      "date": "2024-01-01"
+    },
+    {
+      "id": 2,
+      "categoryId": 2,
+      "userId": 2,
+      "status": "CLOSED",
+      "priority": "LOW",
+      "title": "Install VS Code",
+      "description": "Need it for development.",
+      "date": "2024-01-02"
+    },
+    {
+      "title": "Sefwfweef",
+      "description": "wffewfwfwf",
+      "categoryId": 2,
+      "priority": "MEDIUM",
+      "userId": 3,
+      "date": "2025-12-30T00:14:10.676Z",
+      "status": "OPEN",
+      "id": 3
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "ticketId": 1,
+      "userId": 3,
+      "content": "Will check it tomorrow.",
+      "date": "2024-01-03T10:00:00.000Z"
+    },
+    {
+      "ticketId": 1,
+      "userId": 1,
+      "content": "hello",
+      "date": "2025-12-29T23:59:47.506Z",
+      "id": 2
+    },
+    {
+      "ticketId": 1,
+      "userId": 3,
+      "content": "siema",
+      "date": "2025-12-30T00:13:09.724Z",
+      "id": 3
+    },
+    {
+      "ticketId": 3,
+      "userId": 3,
+      "content": "asdasd",
+      "date": "2025-12-30T00:14:14.050Z",
+      "id": 4
+    }
+  ]
 }

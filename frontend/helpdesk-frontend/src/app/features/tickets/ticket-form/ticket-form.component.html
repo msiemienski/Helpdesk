@@ -1,0 +1,48 @@
+<div class="flex justify-content-center pt-5">
+    <p-card [header]="isEditMode ? 'Edytuj Zgłoszenie' : 'Nowe Zgłoszenie'" [style]="{ width: '600px' }">
+        <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
+
+            <div class="field">
+                <label for="title" class="block mb-2 font-bold text-900">Tytuł</label>
+                <input id="title" type="text" pInputText formControlName="title" class="w-full"
+                    placeholder="Krótki opis problemu" />
+                <small *ngIf="ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched"
+                    class="p-error block mt-1">
+                    Tytuł jest wymagany (min. 5 znaków).
+                </small>
+            </div>
+
+            <div class="grid">
+                <div class="col-12 md:col-6 field">
+                    <label for="category" class="block mb-2 font-bold text-900">Kategoria</label>
+                    <p-select id="category" [options]="categories" formControlName="categoryId" optionLabel="name"
+                        optionValue="id" placeholder="Wybierz kategorię" styleClass="w-full"></p-select>
+                </div>
+                <div class="col-12 md:col-6 field">
+                    <label for="priority" class="block mb-2 font-bold text-900">Priorytet</label>
+                    <p-select id="priority" [options]="priorities" formControlName="priority" optionLabel="label"
+                        optionValue="value" placeholder="Wybierz priorytet" styleClass="w-full"></p-select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="description" class="block mb-2 font-bold text-900">Opis</label>
+                <textarea id="description" pTextarea formControlName="description" [rows]="5" class="w-full"
+                    placeholder="Szczegółowy opis zgłoszenia..."></textarea>
+                <small *ngIf="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched"
+                    class="p-error block mt-1">
+                    Opis jest wymagany.
+                </small>
+            </div>
+
+            <div class="flex justify-content-end gap-2 mt-3">
+                <p-button label="Anuluj" icon="pi pi-times" [text]="true" severity="secondary"
+                    [routerLink]="isEditMode ? ['/tickets', ticketId] : ['/tickets']"></p-button>
+                <p-button [label]="isEditMode ? 'Zapisz zmiany' : 'Utwórz zgłoszenie'"
+                    [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'" type="submit" [loading]="loading"
+                    [disabled]="ticketForm.invalid"></p-button>
+            </div>
+
+        </form>
+    </p-card>
+</div>

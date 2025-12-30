@@ -6,4 +6,5 @@ export interface User {
     readonly firstName: string;
     readonly lastName: string;
     readonly role: UserRole;
+    readonly isSuspended: boolean;
 }

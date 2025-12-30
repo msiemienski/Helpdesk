@@ -5,6 +5,7 @@ import { ApiClient } from './api-client.service';
 import { Ticket } from '../models/ticket.model';
 import { Comment } from '../models/comment.model';
 import { Category } from '../models/category.model';
+import { User } from '../models/user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -26,6 +27,18 @@ export class TicketService {
 
     updateTicket(id: number, ticket: Partial<Ticket>): Observable<Ticket> {
         return this.api.put<Ticket>(`/tickets/${id}`, ticket);
+    }
+
+    deleteTicket(id: number): Observable<void> {
+        return this.api.delete<void>(`/tickets/${id}`);
+    }
+
+    getUser(id: number): Observable<User> {
+        return this.api.get<User>(`/users/${id}`);
+    }
+
+    getUsers(): Observable<User[]> {
+        return this.api.get<User[]>('/users');
     }
 
     // Comments

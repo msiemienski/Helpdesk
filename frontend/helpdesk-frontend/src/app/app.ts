@@ -8,7 +8,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     standalone: true,
     imports: [RouterOutlet, ToastModule, ConfirmDialogModule],
     template: `
-    <p-toast></p-toast>
+    <p-toast position="bottom-right"></p-toast>
     <p-confirmDialog></p-confirmDialog>
     <router-outlet></router-outlet>
   `
