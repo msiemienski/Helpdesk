@@ -32,8 +32,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             } else {
                 // Server-side error
                 if (error.status === 401) {
-                    errorMessage = 'Sesja wygasła - zaloguj się ponownie';
-                    authService.logout();
+                    if (req.url.includes('/auth/login')) {
+                        errorMessage = 'Błędny email lub hasło';
+                    } else {
+                        errorMessage = 'Sesja wygasła - zaloguj się ponownie';
+                        authService.logout();
+                    }
                 } else if (error.status === 403) {
                     errorMessage = 'Brak uprawnień';
                     router.navigate(['/forbidden']);

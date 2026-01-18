@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TicketService } from '../../../core/services/ticket.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Ticket } from '../../../core/models/ticket.model';
+import { Ticket, TicketStatus } from '../../../core/models/ticket.model';
 import { Comment } from '../../../core/models/comment.model';
 import { Category } from '../../../core/models/category.model';
 import { Observable, switchMap, tap } from 'rxjs';
@@ -39,6 +39,7 @@ export class TicketDetailComponent implements OnInit {
     usersMap: Map<number, string> = new Map();
 
     canAct$ = this.authService.canAct$;
+    user$ = this.authService.user$;
 
     constructor() { }
 
@@ -48,6 +49,10 @@ export class TicketDetailComponent implements OnInit {
             users.forEach(u => this.usersMap.set(u.id, `${u.firstName} ${u.lastName}`));
         });
 
+        this.loadTicket();
+    }
+
+    private loadTicket() {
         this.route.paramMap.pipe(
             switchMap(params => {
                 this.ticketId = Number(params.get('id'));
@@ -56,6 +61,28 @@ export class TicketDetailComponent implements OnInit {
             }),
             tap(ticket => this.ticket = ticket)
         ).subscribe();
+    }
+
+    updateStatus(newStatus: TicketStatus) {
+        if (!this.ticket) return;
+
+        this.ticketService.updateTicket(this.ticketId, { ...this.ticket, status: newStatus }).subscribe({
+            next: (updated) => {
+                this.ticket = updated;
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Sukces',
+                    detail: `Status zmieniony na ${newStatus}`
+                });
+            },
+            error: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Błąd',
+                    detail: 'Nie udało się zmienić statusu'
+                });
+            }
+        });
     }
 
     deleteTicket() {
@@ -88,7 +115,7 @@ export class TicketDetailComponent implements OnInit {
     }
 
     addComment() {
-        if (!this.newCommentContent.trim()) return;
+        if (!this.newCommentContent.trim() || this.ticket?.status === 'CLOSED') return;
 
         const user = this.authService.getUser();
         if (!user) return;
