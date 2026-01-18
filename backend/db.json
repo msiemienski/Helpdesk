@@ -11,6 +11,7 @@
     {
       "id": 2,
       "email": "user@example.com",
+      "password": "user",
       "firstName": "Siema",
       "lastName": "Maciek",
       "role": "user"
@@ -44,14 +45,12 @@
   ],
   "tickets": [
     {
-      "id": 1,
-      "categoryId": 1,
-      "userId": 2,
-      "status": "OPEN",
-      "priority": "HIGH",
       "title": "Projector not working",
       "description": "The lamp seems burned out.",
-      "date": "2024-01-01"
+      "categoryId": 1,
+      "priority": "HIGH",
+      "userId": 3,
+      "id": 1
     },
     {
       "id": 2,
@@ -72,6 +71,16 @@
       "date": "2025-12-30T00:14:10.676Z",
       "status": "OPEN",
       "id": 3
+    },
+    {
+      "title": "sfwfwfwe",
+      "description": "sdfsfds",
+      "categoryId": 2,
+      "priority": "MEDIUM",
+      "userId": 1,
+      "date": "2026-01-18T11:51:06.340Z",
+      "status": "OPEN",
+      "id": 4
     }
   ],
   "comments": [

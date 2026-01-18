@@ -1,45 +1,194 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketService } from '../../../core/services/ticket.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Ticket } from '../../../core/models/ticket.model';
 import { Category } from '../../../core/models/category.model';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, BehaviorSubject, combineLatest, forkJoin, map, shareReplay } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { CheckboxModule } from 'primeng/checkbox';
+import { PaginatorModule } from 'primeng/paginator';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-ticket-list',
     standalone: true,
-    imports: [CommonModule, TableModule, TagModule, ButtonModule, RouterLink],
+    imports: [
+        CommonModule,
+        FormsModule,
+        TableModule,
+        TagModule,
+        ButtonModule,
+        RouterLink,
+        InputTextModule,
+        SelectModule,
+        CheckboxModule,
+        PaginatorModule,
+        IconFieldModule,
+        InputIconModule
+    ],
     templateUrl: './ticket-list.component.html'
 })
 export class TicketListComponent implements OnInit {
-    tickets$: Observable<Ticket[]> | undefined;
+    private ticketService = inject(TicketService);
+    private authService = inject(AuthService);
+
+    // Categories mapping
     categories: Map<number, string> = new Map();
 
-    constructor(private ticketService: TicketService) { }
+    // State Streams
+    search$ = new BehaviorSubject<string>('');
+    statusFilter$ = new BehaviorSubject<string | null>(null);
+    onlyMineFilter$ = new BehaviorSubject<boolean>(false);
+
+    sortField$ = new BehaviorSubject<string>('date');
+    sortOrder$ = new BehaviorSubject<number>(-1); // -1 = Desc, 1 = Asc
+
+    page$ = new BehaviorSubject<number>(0);
+    pageSize$ = new BehaviorSubject<number>(5);
+
+    // UI Options
+    statusOptions = [
+        { label: 'Wszystkie statusy', value: null },
+        { label: 'Otwarte (OPEN)', value: 'OPEN' },
+        { label: 'W toku (IN_PROGRESS)', value: 'IN_PROGRESS' },
+        { label: 'Zamknięte (CLOSED)', value: 'CLOSED' }
+    ];
+
+    sortOptions = [
+        { label: 'Data: najnowsze', field: 'date', order: -1 },
+        { label: 'Data: najstarsze', field: 'date', order: 1 },
+        { label: 'Tytuł: A-Z', field: 'title', order: 1 },
+        { label: 'Tytuł: Z-A', field: 'title', order: -1 },
+        { label: 'Priorytet: najwyższy', field: 'priority', order: -1 },
+        { label: 'Priorytet: najniższy', field: 'priority', order: 1 }
+    ];
+
+    selectedSort = this.sortOptions[0];
+
+    // Data Streams
+    filteredTickets$!: Observable<Ticket[]>;
+    totalRecords$!: Observable<number>;
+    paginatedTickets$!: Observable<Ticket[]>;
+
+    private priorityWeight: Record<string, number> = { 'LOW': 1, 'MEDIUM': 2, 'HIGH': 3 };
 
     ngOnInit() {
-        this.loadData();
+        this.loadCategories();
+        this.initializeStreams();
     }
 
-    loadData() {
-        const tickets$ = this.ticketService.getTickets();
-        const categories$ = this.ticketService.getCategories();
+    private loadCategories() {
+        this.ticketService.getCategories().subscribe(cats => {
+            cats.forEach(c => this.categories.set(c.id, c.name));
+        });
+    }
 
-        this.tickets$ = forkJoin({
-            tickets: tickets$,
-            categories: categories$
-        }).pipe(
-            map(({ tickets, categories }) => {
-                categories.forEach(c => this.categories.set(c.id, c.name));
-                return tickets;
+    private initializeStreams() {
+        // Base tickets stream
+        const baseTickets$ = this.ticketService.getTickets().pipe(shareReplay(1));
+        const currentUser = this.authService.getUser();
+
+        // 1. Filtering & Sorting
+        this.filteredTickets$ = combineLatest([
+            baseTickets$,
+            this.search$,
+            this.statusFilter$,
+            this.onlyMineFilter$,
+            this.sortField$,
+            this.sortOrder$
+        ]).pipe(
+            map(([tickets, search, status, onlyMine, field, order]) => {
+                let result = [...tickets];
+
+                // Search filter (text)
+                if (search.trim()) {
+                    const term = search.toLowerCase();
+                    result = result.filter(t => t.title.toLowerCase().includes(term));
+                }
+
+                // Status filter (dropdown)
+                if (status) {
+                    result = result.filter(t => t.status === status);
+                }
+
+                // "Only mine" filter (checkbox)
+                if (onlyMine && currentUser) {
+                    result = result.filter(t => t.userId === currentUser.id);
+                }
+
+                // Sorting (3 types)
+                result.sort((a, b) => {
+                    let valA: any = a[field as keyof Ticket];
+                    let valB: any = b[field as keyof Ticket];
+
+                    // Priority sorting logic (numeric)
+                    if (field === 'priority') {
+                        valA = this.priorityWeight[valA as string] || 0;
+                        valB = this.priorityWeight[valB as string] || 0;
+                    }
+
+                    // Alphabetical and Date sorting
+                    if (valA < valB) return -1 * order;
+                    if (valA > valB) return 1 * order;
+                    return 0;
+                });
+
+                return result;
+            }),
+            shareReplay(1)
+        );
+
+        this.totalRecords$ = this.filteredTickets$.pipe(map(t => t.length));
+
+        // 2. Pagination
+        this.paginatedTickets$ = combineLatest([
+            this.filteredTickets$,
+            this.page$,
+            this.pageSize$
+        ]).pipe(
+            map(([tickets, page, size]) => {
+                const start = page * size;
+                return tickets.slice(start, start + size);
             })
         );
     }
 
+    // Event Handlers
+    onSearch(event: any) {
+        this.search$.next(event.target.value);
+        this.page$.next(0); // Reset to first page
+    }
+
+    onStatusChange(value: string | null) {
+        this.statusFilter$.next(value);
+        this.page$.next(0);
+    }
+
+    onOnlyMineToggle(checked: boolean) {
+        this.onlyMineFilter$.next(checked);
+        this.page$.next(0);
+    }
+
+    onSortChange(option: any) {
+        this.sortField$.next(option.field);
+        this.sortOrder$.next(option.order);
+        this.page$.next(0);
+    }
+
+    onPageChange(event: any) {
+        this.page$.next(event.page);
+        this.pageSize$.next(event.rows);
+    }
+
+    // Severity Helpers
     getCategoryName(id: number): string {
         return this.categories.get(id) || 'Unknown';
     }

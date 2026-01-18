@@ -1,43 +1,79 @@
-<div class="card">
-    <div class="flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0 text-900 font-bold">Zgłoszenia</h2>
-        <p-button label="Nowe Zgłoszenie" icon="pi pi-plus" [routerLink]="['/tickets/new']"></p-button>
+<div class="card p-4 shadow-2 border-round">
+    <div class="flex justify-content-between align-items-center mb-5">
+        <h2 class="m-0 text-900 font-bold text-3xl">Zgłoszenia</h2>
+        <p-button label="Nowe Zgłoszenie" icon="pi pi-plus" [routerLink]="['/tickets/new']"
+            styleClass="p-button-raised"></p-button>
     </div>
 
-    <p-table [value]="(tickets$ | async) || []" [tableStyle]="{ 'min-width': '50rem' }">
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width:5%" class="text-900 font-bold uppercase text-xs">ID</th>
-                <th style="width:30%" class="text-900 font-bold uppercase text-xs">Tytuł</th>
-                <th style="width:20%" class="text-900 font-bold uppercase text-xs">Kategoria</th>
-                <th style="width:10%" class="text-900 font-bold uppercase text-xs">Priorytet</th>
-                <th style="width:15%" class="text-900 font-bold uppercase text-xs">Status</th>
-                <th style="width:10%" class="text-900 font-bold uppercase text-xs">Data</th>
-                <th style="width:10%"></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-ticket>
-            <tr>
-                <td>{{ ticket.id }}</td>
-                <td class="font-bold">{{ ticket.title }}</td>
-                <td>{{ getCategoryName(ticket.categoryId) }}</td>
-                <td>
-                    <p-tag [value]="ticket.priority" [severity]="getPrioritySeverity(ticket.priority)"></p-tag>
-                </td>
-                <td>
-                    <p-tag [value]="ticket.status" [severity]="getSeverity(ticket.status)"></p-tag>
-                </td>
-                <td>{{ ticket.date | date:'shortDate' }}</td>
-                <td>
-                    <p-button icon="pi pi-search" [rounded]="true" [text]="true"
-                        [routerLink]="['/tickets', ticket.id]"></p-button>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="7">Brak zgłoszeń.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+    <!-- Filter & Sort Bar -->
+    <div
+        class="flex flex-wrap gap-3 align-items-center mb-4 p-3 surface-section border-round border-1 border-200 shadow-1">
+        <p-iconField iconPosition="left" class="flex-grow-1">
+            <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
+            <input type="text" pInputText placeholder="Szukaj po tytule..." class="w-full" (input)="onSearch($event)" />
+        </p-iconField>
+
+        <p-select [options]="statusOptions" (onChange)="onStatusChange($event.value)" placeholder="Status"
+            class="w-full md:w-15rem"></p-select>
+
+        <p-select [options]="sortOptions" [(ngModel)]="selectedSort" (onChange)="onSortChange($event.value)"
+            optionLabel="label" placeholder="Sortuj według" class="w-full md:w-15rem"></p-select>
+
+        <div class="flex align-items-center gap-2 px-2 bg-primary-reverse border-round p-2 border-1 border-200">
+            <p-checkbox [binary]="true" inputId="onlyMine" (onChange)="onOnlyMineToggle($event.checked)"></p-checkbox>
+            <label for="onlyMine" class="text-900 font-medium cursor-pointer">Tylko moje</label>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="border-round border-1 border-200 overflow-hidden shadow-1">
+        <p-table [value]="(paginatedTickets$ | async) || []" [tableStyle]="{ 'min-width': '50rem' }"
+            styleClass="p-datatable-striped">
+            <ng-template pTemplate="header">
+                <tr class="surface-ground">
+                    <th style="width:5%" class="text-900 font-bold uppercase text-xs p-3">ID</th>
+                    <th style="width:30%" class="text-900 font-bold uppercase text-xs p-3">Tytuł</th>
+                    <th style="width:20%" class="text-900 font-bold uppercase text-xs p-3">Kategoria</th>
+                    <th style="width:10%" class="text-900 font-bold uppercase text-xs p-3">Priorytet</th>
+                    <th style="width:15%" class="text-900 font-bold uppercase text-xs p-3">Status</th>
+                    <th style="width:10%" class="text-900 font-bold uppercase text-xs p-3">Data</th>
+                    <th style="width:10%" class="p-3"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-ticket>
+                <tr class="hover:surface-100 transition-colors duration-200">
+                    <td class="p-3">{{ ticket.id }}</td>
+                    <td class="p-3 font-bold text-900">{{ ticket.title }}</td>
+                    <td class="p-3"><span class="text-600">{{ getCategoryName(ticket.categoryId) }}</span></td>
+                    <td class="p-3">
+                        <p-tag [value]="ticket.priority" [severity]="getPrioritySeverity(ticket.priority)"
+                            styleClass="text-xs uppercase"></p-tag>
+                    </td>
+                    <td class="p-3">
+                        <p-tag [value]="ticket.status" [severity]="getSeverity(ticket.status)"
+                            styleClass="text-xs p-2"></p-tag>
+                    </td>
+                    <td class="p-3 text-500 text-sm">{{ ticket.date | date:'mediumDate' }}</td>
+                    <td class="p-3 text-right">
+                        <p-button icon="pi pi-search" [rounded]="true" [text]="true" label="Szczegóły"
+                            [routerLink]="['/tickets', ticket.id]" styleClass="p-button-sm"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7" class="p-5 text-center text-500">
+                        <i class="pi pi-info-circle mr-2"></i> Brak zgłoszeń spełniających kryteria.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <!-- Paginator -->
+    <div class="mt-4 flex justify-content-center">
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="(page$ | async)! * (pageSize$ | async)!"
+            [rows]="(pageSize$ | async)!" [totalRecords]="(totalRecords$ | async) || 0"
+            [rowsPerPageOptions]="[5, 10, 20]" styleClass="surface-ground border-round shadow-1"></p-paginator>
+    </div>
 </div>
