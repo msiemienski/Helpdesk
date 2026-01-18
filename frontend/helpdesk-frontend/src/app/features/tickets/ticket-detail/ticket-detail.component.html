@@ -1,30 +1,39 @@
-<div class="grid" *ngIf="ticket">
+<div class="grid">
+    @if (ticket) {
     <div class="col-12 md:col-8">
         <p-card styleClass="mb-4">
             <div class="flex justify-content-between align-items-center mb-3">
                 <h1 class="m-0 text-900 font-bold text-3xl">{{ ticket.title }}</h1>
-                <div class="flex gap-2 align-items-center" *ngIf="user$ | async as currentUser">
+                @if (user$ | async; as currentUser) {
+                <div class="flex gap-2 align-items-center">
                     <p-tag [value]="ticket.status" [severity]="getSeverity(ticket.status)"
                         styleClass="p-2 text-sm"></p-tag>
 
                     <!-- Support Actions: Toggle Status -->
-                    <ng-container *ngIf="currentUser.role === 'support'">
-                        <p-button *ngIf="ticket.status === 'OPEN'" icon="pi pi-play" [rounded]="true" [text]="true"
-                            label="Zacznij" severity="info" (click)="updateStatus('IN_PROGRESS')"></p-button>
-                        <p-button *ngIf="ticket.status !== 'CLOSED'" icon="pi pi-lock" [rounded]="true" [text]="true"
-                            label="Zamknij" severity="warn" (click)="updateStatus('CLOSED')"></p-button>
-                        <p-button *ngIf="ticket.status === 'CLOSED'" icon="pi pi-lock-open" [rounded]="true"
-                            [text]="true" label="Otwórz" severity="info" (click)="updateStatus('OPEN')"></p-button>
-                    </ng-container>
+                    @if (currentUser.role === 'support') {
+                    @if (ticket.status === 'OPEN') {
+                    <p-button icon="pi pi-play" [rounded]="true" [text]="true" label="Zacznij" severity="info"
+                        (click)="updateStatus('IN_PROGRESS')"></p-button>
+                    }
+                    @if (ticket.status !== 'CLOSED') {
+                    <p-button icon="pi pi-lock" [rounded]="true" [text]="true" label="Zamknij" severity="warn"
+                        (click)="updateStatus('CLOSED')"></p-button>
+                    }
+                    @if (ticket.status === 'CLOSED') {
+                    <p-button icon="pi pi-lock-open" [rounded]="true" [text]="true" label="Otwórz" severity="info"
+                        (click)="updateStatus('OPEN')"></p-button>
+                    }
+                    }
 
                     <!-- Admin Actions: Edit & Delete -->
-                    <ng-container *ngIf="currentUser.role === 'admin'">
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" label="Edytuj"
-                            [routerLink]="['/tickets', ticket.id, 'edit']"></p-button>
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" label="Usuń"
-                            (click)="deleteTicket()"></p-button>
-                    </ng-container>
+                    @if (currentUser.role === 'admin') {
+                    <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" label="Edytuj"
+                        [routerLink]="['/tickets', ticket.id, 'edit']"></p-button>
+                    <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" label="Usuń"
+                        (click)="deleteTicket()"></p-button>
+                    }
                 </div>
+                }
             </div>
             <div class="flex gap-2 mb-3">
                 <p-tag [value]="ticket.priority" [severity]="getPrioritySeverity(ticket.priority)"></p-tag>
@@ -44,7 +53,8 @@
 
         <p-card header="Komentarze">
             <div class="flex flex-column gap-4">
-                <div *ngFor="let comment of (comments$ | async)" class="surface-ground p-3 border-round">
+                @for (comment of (comments$ | async); track comment.id) {
+                <div class="surface-ground p-3 border-round">
                     <div class="flex justify-content-between mb-2">
                         <span class="font-bold">
                             <i class="pi pi-user mr-1 text-400"></i>
@@ -54,24 +64,29 @@
                     </div>
                     <div class="text-900">{{ comment.content }}</div>
                 </div>
+                }
             </div>
         </p-card>
         <p-card header="Dodaj komentarz" class="mt-4">
-            <div *ngIf="!(canAct$ | async)" class="mb-3">
+            @if ((canAct$ | async) === false) {
+            <div class="mb-3">
                 <p-message severity="error"
                     text="Twoje konto jest zawieszone. Nie możesz dodawać komentarzy."></p-message>
             </div>
-            <div *ngIf="ticket.status === 'CLOSED'" class="mb-3">
+            }
+            @if (ticket.status === 'CLOSED') {
+            <div class="mb-3">
                 <p-message severity="info"
                     text="To zgłoszenie jest zamknięte. Dodawanie komentarzy jest zablokowane."></p-message>
             </div>
+            }
             <div class="flex flex-column gap-3">
                 <textarea pTextarea [(ngModel)]="newCommentContent" rows="3" class="w-full"
                     placeholder="Wpisz treść komentarza..."
-                    [disabled]="!(canAct$ | async) || ticket.status === 'CLOSED'"></textarea>
+                    [disabled]="(canAct$ | async) === false || ticket.status === 'CLOSED'"></textarea>
                 <div class="flex justify-content-end">
                     <p-button label="Wyślij" icon="pi pi-send" (click)="addComment()"
-                        [disabled]="!newCommentContent.trim() || !(canAct$ | async) || ticket.status === 'CLOSED'"></p-button>
+                        [disabled]="!newCommentContent.trim() || (canAct$ | async) === false || ticket.status === 'CLOSED'"></p-button>
                 </div>
             </div>
         </p-card>
@@ -80,4 +95,5 @@
     <div class="col-12 md:col-4">
         <!-- Sidebar info if needed -->
     </div>
+    }
 </div>

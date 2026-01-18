@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TicketService } from '../../../core/services/ticket.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Ticket, TicketStatus } from '../../../core/models/ticket.model';
@@ -15,7 +15,7 @@ import { TimelineModule } from 'primeng/timeline';
 import { TagModule } from 'primeng/tag';
 import { MessageModule } from 'primeng/message';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Router, RouterLink } from '@angular/router';
+
 
 @Component({
     selector: 'app-ticket-detail',
@@ -31,39 +31,38 @@ export class TicketDetailComponent implements OnInit {
     private messageService = inject(MessageService);
     private router = inject(Router);
 
-    ticket: Ticket | null = null;
-    comments$: Observable<Comment[]> | undefined;
-    categories: Category[] = [];
-    newCommentContent = '';
-    ticketId: number = 0;
-    usersMap: Map<number, string> = new Map();
+    public ticket: Ticket | null = null;
+    public comments$: Observable<Comment[]> | undefined;
+    public categories: Category[] = [];
+    public newCommentContent = '';
+    public ticketId = 0;
+    public usersMap: Map<number, string> = new Map<number, string>();
 
-    canAct$ = this.authService.canAct$;
-    user$ = this.authService.user$;
+    public canAct$ = this.authService.canAct$;
+    public user$ = this.authService.user$;
 
-    constructor() { }
-
-    ngOnInit() {
-        this.ticketService.getCategories().subscribe((cats: Category[]) => this.categories = cats);
-        this.ticketService.getUsers().subscribe(users => {
-            users.forEach(u => this.usersMap.set(u.id, `${u.firstName} ${u.lastName}`));
+    public ngOnInit(): void {
+        this.ticketService.getCategories().subscribe((cats: Category[]) => (this.categories = cats));
+        this.ticketService.getUsers().subscribe((users) => {
+            users.forEach((u) => this.usersMap.set(u.id, `${u.firstName} ${u.lastName}`));
         });
 
         this.loadTicket();
     }
 
-    private loadTicket() {
+    private loadTicket(): void {
         this.route.paramMap.pipe(
-            switchMap(params => {
+            switchMap((params) => {
                 this.ticketId = Number(params.get('id'));
                 this.comments$ = this.ticketService.getComments(this.ticketId);
+
                 return this.ticketService.getTicket(this.ticketId);
             }),
-            tap(ticket => this.ticket = ticket)
+            tap((ticket) => (this.ticket = ticket))
         ).subscribe();
     }
 
-    updateStatus(newStatus: TicketStatus) {
+    public updateStatus(newStatus: TicketStatus): void {
         if (!this.ticket) return;
 
         this.ticketService.updateTicket(this.ticketId, { ...this.ticket, status: newStatus }).subscribe({
@@ -85,7 +84,7 @@ export class TicketDetailComponent implements OnInit {
         });
     }
 
-    deleteTicket() {
+    public deleteTicket(): void {
         this.confirmationService.confirm({
             message: 'Czy na pewno chcesz usunąć to zgłoszenie?',
             header: 'Potwierdzenie usunięcia',
@@ -96,7 +95,7 @@ export class TicketDetailComponent implements OnInit {
                 this.ticketService.deleteTicket(this.ticketId).subscribe({
                     next: () => {
                         this.messageService.add({ severity: 'success', summary: 'Sukces', detail: 'Zgłoszenie zostało usunięte' });
-                        this.router.navigate(['/tickets']);
+                        void this.router.navigate(['/tickets']);
                     },
                     error: () => {
                         this.messageService.add({ severity: 'error', summary: 'Błąd', detail: 'Nie udało się usunąć zgłoszenia' });
@@ -106,15 +105,15 @@ export class TicketDetailComponent implements OnInit {
         });
     }
 
-    getCategoryName(id: number): string {
-        return this.categories.find(c => c.id === id)?.name || 'Unknown';
+    public getCategoryName(id: number): string {
+        return this.categories.find((c) => c.id === id)?.name || 'Unknown';
     }
 
-    getUserName(userId: number): string {
+    public getUserName(userId: number): string {
         return this.usersMap.get(userId) || `User #${userId}`;
     }
 
-    addComment() {
+    public addComment(): void {
         if (!this.newCommentContent.trim() || this.ticket?.status === 'CLOSED') return;
 
         const user = this.authService.getUser();
@@ -133,7 +132,7 @@ export class TicketDetailComponent implements OnInit {
         });
     }
 
-    getSeverity(status: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
+    public getSeverity(status: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
         switch (status) {
             case 'OPEN': return 'info';
             case 'IN_PROGRESS': return 'warn';
@@ -142,7 +141,7 @@ export class TicketDetailComponent implements OnInit {
         }
     }
 
-    getPrioritySeverity(priority: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
+    public getPrioritySeverity(priority: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
         switch (priority) {
             case 'HIGH': return 'danger';
             case 'MEDIUM': return 'warn';

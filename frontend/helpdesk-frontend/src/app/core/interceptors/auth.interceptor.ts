@@ -1,9 +1,39 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+
+interface ErrorResponse {
+    message?: string;
+}
+
+function getErrorMessage(error: HttpErrorResponse, req: HttpRequest<unknown>, authService: AuthService, router: Router): string {
+    if (error.error instanceof ErrorEvent) {
+        return `Błąd: ${error.error.message}`;
+    }
+
+    const serverError = error.error as ErrorResponse;
+    const msg = serverError.message;
+
+    if (error.status === 401) {
+        if (req.url.includes('/auth/login')) return 'Błędny email lub hasło';
+        authService.logout();
+
+        return 'Sesja wygasła - zaloguj się ponownie';
+    }
+
+    if (error.status === 403) {
+        void router.navigate(['/forbidden']);
+
+        return 'Brak uprawnień';
+    }
+
+    if (error.status === 409) return msg || 'Konflikt danych';
+
+    return msg || `Kod błędu: ${error.status}`;
+}
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
@@ -11,46 +41,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
     const token = authService.getToken();
 
-    let request = req;
-
-    if (token) {
-        request = req.clone({
-            setHeaders: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-    }
+    const request = token ? req.clone({
+        setHeaders: {
+            Authorization: `Bearer ${token}`
+        }
+    }) : req;
 
     return next(request).pipe(
         catchError((error: HttpErrorResponse) => {
-            let errorMessage = 'Wystąpił nieoczekiwany błąd';
-            let summary = 'Błąd';
-
-            if (error.error instanceof ErrorEvent) {
-                // Client-side error
-                errorMessage = `Błąd: ${error.error.message}`;
-            } else {
-                // Server-side error
-                if (error.status === 401) {
-                    if (req.url.includes('/auth/login')) {
-                        errorMessage = 'Błędny email lub hasło';
-                    } else {
-                        errorMessage = 'Sesja wygasła - zaloguj się ponownie';
-                        authService.logout();
-                    }
-                } else if (error.status === 403) {
-                    errorMessage = 'Brak uprawnień';
-                    router.navigate(['/forbidden']);
-                } else if (error.status === 409) {
-                    errorMessage = error.error?.message || 'Konflikt danych';
-                } else {
-                    errorMessage = error.error?.message || `Kod błędu: ${error.status}`;
-                }
-            }
+            const errorMessage = getErrorMessage(error, req, authService, router);
 
             messageService.add({
                 severity: 'error',
-                summary: summary,
+                summary: 'Błąd',
                 detail: errorMessage,
                 life: 5000
             });

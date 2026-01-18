@@ -6,10 +6,11 @@
                 <label for="title" class="block mb-2 font-bold text-900">Tytuł</label>
                 <input id="title" type="text" pInputText formControlName="title" class="w-full"
                     placeholder="Krótki opis problemu" />
-                <small *ngIf="ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched"
-                    class="p-error block mt-1">
+                @if (ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched) {
+                <small class="p-error block mt-1">
                     Tytuł jest wymagany (min. 5 znaków).
                 </small>
+                }
             </div>
 
             <div class="grid">
@@ -29,10 +30,11 @@
                 <label for="description" class="block mb-2 font-bold text-900">Opis</label>
                 <textarea id="description" pTextarea formControlName="description" [rows]="5" class="w-full"
                     placeholder="Szczegółowy opis zgłoszenia..."></textarea>
-                <small *ngIf="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched"
-                    class="p-error block mt-1">
+                @if (ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched) {
+                <small class="p-error block mt-1">
                     Opis jest wymagany.
                 </small>
+                }
             </div>
 
             <div class="flex justify-content-end gap-2 mt-3">

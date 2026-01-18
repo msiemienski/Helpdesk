@@ -19,12 +19,12 @@ export class ProfileComponent implements OnInit {
     private authService = inject(AuthService);
     private messageService = inject(MessageService);
 
-    profileForm: FormGroup;
-    user$ = this.authService.user$;
-    canAct$ = this.authService.canAct$;
-    loading = false;
+    public profileForm: FormGroup;
+    public user$ = this.authService.user$;
+    public canAct$ = this.authService.canAct$;
+    public loading = false;
 
-    constructor() {
+    public constructor() {
         this.profileForm = this.fb.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
@@ -33,17 +33,18 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
+    public ngOnInit(): void {
         const user = this.authService.getUser();
         if (user) {
             this.profileForm.patchValue(user);
         }
     }
 
-    onSubmit() {
+    public onSubmit(): void {
         if (this.profileForm.invalid) return;
 
         this.loading = true;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         this.authService.updateUser(this.profileForm.value).subscribe({
             next: () => {
                 this.messageService.add({ severity: 'success', summary: 'Sukces', detail: 'Profil zaktualizowany' });

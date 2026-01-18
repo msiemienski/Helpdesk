@@ -18,18 +18,22 @@
                         class="w-full p-inputtext-lg border-2 hover:border-primary-500 transition-colors"
                         placeholder="Twoja nazwa użytkownika" />
                 </span>
-                <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="p-error">
+                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                <small class="p-error">
                     Podaj poprawny adres email
                 </small>
+                }
             </div>
 
             <div class="flex flex-column gap-2">
                 <label for="password" class="font-semibold text-900">Hasło</label>
                 <p-password id="password" formControlName="password" [feedback]="false" [toggleMask]="true"
                     appendTo="body" styleClass="w-full" inputStyleClass="w-full p-inputtext-lg"></p-password>
-                <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="p-error">
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                <small class="p-error">
                     Hasło jest wymagane
                 </small>
+                }
             </div>
 
             <p-button label="Zaloguj się" icon="pi pi-sign-in" type="submit" [loading]="loading"

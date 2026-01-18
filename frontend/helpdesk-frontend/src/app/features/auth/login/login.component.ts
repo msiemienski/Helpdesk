@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,33 +17,33 @@ import { MessageService } from 'primeng/api';
     templateUrl: './login.component.html'
 })
 export class LoginComponent {
-    loginForm: FormGroup;
-    loading = false;
+    private fb = inject(FormBuilder);
+    private authService = inject(AuthService);
+    private router = inject(Router);
+    private messageService = inject(MessageService);
 
-    constructor(
-        private fb: FormBuilder,
-        private authService: AuthService,
-        private router: Router,
-        private messageService: MessageService
-    ) {
+    public loginForm: FormGroup;
+    public loading = false;
+
+    public constructor() {
         this.loginForm = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required]
         });
     }
 
-    onSubmit() {
+    public onSubmit(): void {
         if (this.loginForm.invalid) {
             return;
         }
 
         this.loading = true;
-        const credentials: LoginRequest = this.loginForm.value;
+        const credentials = this.loginForm.value as LoginRequest;
 
         this.authService.login(credentials).subscribe({
             next: () => {
                 this.messageService.add({ severity: 'success', summary: 'Sukces', detail: 'Zalogowano pomyślnie' });
-                this.router.navigate(['/home']);
+                void this.router.navigate(['/home']);
             },
             error: (err) => {
                 this.loading = false;

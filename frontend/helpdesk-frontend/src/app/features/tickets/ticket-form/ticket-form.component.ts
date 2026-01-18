@@ -1,10 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TicketService } from '../../../core/services/ticket.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Category } from '../../../core/models/category.model';
+import { Ticket } from '../../../core/models/ticket.model';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
@@ -37,37 +38,37 @@ export class TicketFormComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private messageService = inject(MessageService);
 
-    ticketForm: FormGroup;
-    categories: Category[] = [];
-    isEditMode = false;
-    ticketId: number | null = null;
-    loading = false;
+    public ticketForm: FormGroup;
+    public categories: Category[] = [];
+    public isEditMode = false;
+    public ticketId: number | null = null;
+    public loading = false;
 
-    priorities = [
+    public priorities = [
         { label: 'Niski', value: 'LOW' },
         { label: 'Średni', value: 'MEDIUM' },
         { label: 'Wysoki', value: 'HIGH' }
     ];
 
-    constructor() {
+    public constructor() {
         this.ticketForm = this.fb.group({
-            title: ['', [Validators.required, Validators.minLength(5)]],
-            description: ['', Validators.required],
-            categoryId: [null, Validators.required],
-            priority: ['LOW', Validators.required]
+            title: ['', [(c: AbstractControl) => Validators.required(c), (c: AbstractControl) => Validators.minLength(5)(c)]],
+            description: ['', (c: AbstractControl) => Validators.required(c)],
+            categoryId: [null, (c: AbstractControl) => Validators.required(c)],
+            priority: ['LOW', (c: AbstractControl) => Validators.required(c)]
         });
     }
 
-    ngOnInit() {
+    public ngOnInit(): void {
         this.loadCategories();
         this.checkEditMode();
     }
 
-    loadCategories() {
-        this.ticketService.getCategories().subscribe(cats => this.categories = cats);
+    public loadCategories(): void {
+        this.ticketService.getCategories().subscribe((cats) => (this.categories = cats));
     }
 
-    checkEditMode() {
+    public checkEditMode(): void {
         this.ticketId = Number(this.route.snapshot.paramMap.get('id'));
         if (this.ticketId) {
             this.isEditMode = true;
@@ -79,20 +80,20 @@ export class TicketFormComponent implements OnInit {
                 },
                 error: () => {
                     this.messageService.add({ severity: 'error', summary: 'Błąd', detail: 'Nie udało się pobrać zgłoszenia' });
-                    this.router.navigate(['/tickets']);
+                    void this.router.navigate(['/tickets']);
                 }
             });
         }
     }
 
-    onSubmit() {
+    public onSubmit(): void {
         if (this.ticketForm.invalid) return;
 
         this.loading = true;
         const user = this.authService.getUser();
 
-        const ticketData = {
-            ...this.ticketForm.value,
+        const ticketData: Partial<Ticket> = {
+            ...(this.ticketForm.value as Partial<Ticket>),
             userId: user?.id,
             date: this.isEditMode ? undefined : new Date().toISOString(),
             status: this.isEditMode ? undefined : 'OPEN'
@@ -109,7 +110,7 @@ export class TicketFormComponent implements OnInit {
                     summary: 'Sukces',
                     detail: this.isEditMode ? 'Zgłoszenie zaktualizowane' : 'Zgłoszenie utworzone'
                 });
-                this.router.navigate(['/tickets', ticket.id]);
+                void this.router.navigate(['/tickets', ticket.id]);
             },
             error: () => {
                 this.loading = false;

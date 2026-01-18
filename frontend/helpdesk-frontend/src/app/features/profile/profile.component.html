@@ -1,9 +1,11 @@
 <div class="flex justify-content-center pt-5">
     <p-card header="Mój Profil" [style]="{ width: '500px' }">
-        <div *ngIf="(user$ | async)?.isSuspended" class="mb-4">
+        @if ((user$ | async)?.isSuspended) {
+        <div class="mb-4">
             <p-message severity="error" text="Twoje konto jest zawieszone. Akcje dodawania i edycji są zablokowane."
                 styleClass="w-full"></p-message>
         </div>
+        }
 
         <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
 
@@ -20,19 +22,21 @@
             <div class="field">
                 <label for="firstName" class="block mb-2 font-bold text-900">Imię</label>
                 <input id="firstName" type="text" pInputText formControlName="firstName" class="w-full" />
-                <small *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
-                    class="p-error block mt-1">
+                @if (profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched) {
+                <small class="p-error block mt-1">
                     Imię jest wymagane
                 </small>
+                }
             </div>
 
             <div class="field">
                 <label for="lastName" class="block mb-2 font-bold text-900">Nazwisko</label>
                 <input id="lastName" type="text" pInputText formControlName="lastName" class="w-full" />
-                <small *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
-                    class="p-error block mt-1">
+                @if (profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched) {
+                <small class="p-error block mt-1">
                     Nazwisko jest wymagane
                 </small>
+                }
             </div>
 
             <div class="flex justify-content-end mt-2">

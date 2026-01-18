@@ -10,19 +10,18 @@
     </div>
 
     <div class="flex gap-2">
-        <ng-container *ngIf="user$ | async as user; else guest">
-            <div class="flex align-items-center gap-3 mr-2">
-                <span class="text-700 text-sm">
-                    Witaj, <a routerLink="/profile" class="font-bold text-900 no-underline hover:underline">{{
-                        user.firstName }} {{ user.lastName }}</a>
-                    <span class="ml-1 px-2 py-1 surface-200 border-round text-xs font-semibold uppercase">{{ user.role
-                        }}</span>
-                </span>
-                <p-button label="Wyloguj" icon="pi pi-sign-out" [text]="true" (click)="logout()"></p-button>
-            </div>
-        </ng-container>
-        <ng-template #guest>
-            <a routerLink="/auth/login" class="p-button p-component p-button-text no-underline">Zaloguj</a>
-        </ng-template>
+        @if (user$ | async; as user) {
+        <div class="flex align-items-center gap-3 mr-2">
+            <span class="text-700 text-sm">
+                Witaj, <a routerLink="/profile" class="font-bold text-900 no-underline hover:underline">{{
+                    user.firstName }} {{ user.lastName }}</a>
+                <span class="ml-1 px-2 py-1 surface-200 border-round text-xs font-semibold uppercase">{{ user.role
+                    }}</span>
+            </span>
+            <p-button label="Wyloguj" icon="pi pi-sign-out" [text]="true" (click)="logout()"></p-button>
+        </div>
+        } @else {
+        <a routerLink="/auth/login" class="p-button p-component p-button-text no-underline">Zaloguj</a>
+        }
     </div>
 </nav>

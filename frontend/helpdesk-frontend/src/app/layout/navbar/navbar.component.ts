@@ -13,9 +13,9 @@ import { ButtonModule } from 'primeng/button';
 })
 export class NavbarComponent {
     private authService = inject(AuthService);
-    user$ = this.authService.user$;
+    public user$ = this.authService.user$;
 
-    logout() {
+    public logout(): void {
         this.authService.logout();
     }
 }
