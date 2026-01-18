@@ -4,14 +4,15 @@
 
 html,
 body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: var(--font-family);
     background-color: var(--p-content-background);
     color: var(--p-text-color);
+    font-family: var(--font-family);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
 }
 
 :root {
@@ -19,10 +20,10 @@ body {
 }
 
 .p-tag {
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    font-size: 0.7rem !important;
 }
 
 .p-button {

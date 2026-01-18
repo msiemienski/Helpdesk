@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "lintstyle": "stylelint 'src/**/*.scss' --custom-syntax postcss-scss"
+    "lintstyle": "stylelint \"src/**/*.scss\" --custom-syntax postcss-scss"
   },
   "prettier": {
     "printWidth": 100,

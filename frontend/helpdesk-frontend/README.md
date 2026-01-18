@@ -1,59 +1,45 @@
-# HelpdeskFrontend
+# Helpdesk Client
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
+Aplikacja kliencka systemu Helpdesk zbudowana w Angularze. Umożliwia użytkownikom zgłaszanie problemów, a administratorom zarządzanie nimi.
 
-## Development server
+## Funkcje
+- **Logowanie i autoryzacja**: System oparty na JWT z zapamiętywaniem sesji.
+- **Zarządzanie zgłoszeniami**:
+    - Przeglądanie listy zgłoszeń (filtrowanie dla użytkowników).
+    - Szczegóły zgłoszenia wraz z komentarzami.
+    - Tworzenie nowych zgłoszeń z wyborem kategorii.
+- **Rola Administratora**: Pełny wgląd we wszystkie zgłoszenia w systemie.
+- **Responsywny Design**: Przygotowany z użyciem nowoczesnych standardów CSS/SCSS.
 
-To start a local development server, run:
+## Stos Technologiczny
+- **Angular 20**
+- **RxJS** (reaktywne zarządzanie danymi)
+- **SCSS** (stylowanie)
+- **ESLint & Stylelint** (jakość kodu)
 
-```bash
-ng serve
-```
+## Instalacja i Uruchomienie
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. Wejdź do katalogu frontendu:
+   ```bash
+   cd frontend/helpdesk-frontend
+   ```
+2. Zainstaluj zależności:
+   ```bash
+   npm install
+   ```
+3. Uruchom serwer deweloperski:
+   ```bash
+   npm start
+   # lub
+   ng serve
+   ```
+Aplikacja będzie dostępna pod adresem `http://localhost:4200`.
 
-## Code scaffolding
+## Struktura Projektu
+- `src/app/core`: Serwisy globalne, modele, guardy i interceptory (np. `AuthInterceptor`).
+- `src/app/features`: Moduły funkcjonalne (auth, tickets, home, profile).
+- `src/app/layout`: Komponenty układu strony (shell, navigation).
+- `src/app/shared`: Współdzielone UI, rury (pipes) i dyrektywy.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Wymagania
+Do poprawnego działania aplikacji wymagane jest uruchomienie backendu na porcie 3000.
