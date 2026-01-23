@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: helpdesk-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - db-data:/app
+    environment:
+      - NODE_ENV=production
+    networks:
+      - helpdesk-network
+    restart: unless-stopped
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend/helpdesk-frontend
+      dockerfile: Dockerfile
+    container_name: helpdesk-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - helpdesk-network
+    restart: unless-stopped
+
+networks:
+  helpdesk-network:
+    driver: bridge
+
+volumes:
+  db-data:

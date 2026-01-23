@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+dist
+.angular
+.git
+.gitignore
+README.md
+.editorconfig
+.prettierrc
+.eslintignore
+coverage
+.env
+.env.local
+.DS_Store
