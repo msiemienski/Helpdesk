@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { User } from '../../core/models/auth.model';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -45,7 +46,7 @@ export class ProfileComponent implements OnInit {
 
         this.loading = true;
 
-        this.authService.updateUser(this.profileForm.value).subscribe({
+        this.authService.updateUser(this.profileForm.value as Partial<User>).subscribe({
             next: () => {
                 this.messageService.add({ severity: 'success', summary: 'Sukces', detail: 'Profil zaktualizowany' });
                 this.loading = false;
