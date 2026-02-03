@@ -44,7 +44,7 @@ export class ProfileComponent implements OnInit {
         if (this.profileForm.invalid) return;
 
         this.loading = true;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
         this.authService.updateUser(this.profileForm.value).subscribe({
             next: () => {
                 this.messageService.add({ severity: 'success', summary: 'Sukces', detail: 'Profil zaktualizowany' });

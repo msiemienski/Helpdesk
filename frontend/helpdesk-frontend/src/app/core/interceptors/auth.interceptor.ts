@@ -6,7 +6,7 @@ import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 interface ErrorResponse {
-    message?: string;
+    readonly message?: string;
 }
 
 function getErrorMessage(error: HttpErrorResponse, req: HttpRequest<unknown>, authService: AuthService, router: Router): string {

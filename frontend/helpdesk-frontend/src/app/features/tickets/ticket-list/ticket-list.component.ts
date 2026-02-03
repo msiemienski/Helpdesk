@@ -17,15 +17,15 @@ import { InputIconModule } from 'primeng/inputicon';
 import { FormsModule } from '@angular/forms';
 
 interface SortEvent {
-    field: string;
-    order: number;
+    readonly field: string;
+    readonly order: number;
 }
 
 interface PageEvent {
-    page?: number;
-    first?: number;
-    rows?: number;
-    pageCount?: number;
+    readonly page?: number;
+    readonly first?: number;
+    readonly rows?: number;
+    readonly pageCount?: number;
 }
 
 @Component({
