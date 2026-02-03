@@ -19,6 +19,7 @@
     {
       "id": 3,
       "email": "support@example.com",
+      "password": "support",
       "firstName": "Tech1",
       "lastName": "Support",
       "role": "support"
